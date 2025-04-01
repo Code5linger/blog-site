@@ -5,12 +5,13 @@ import ArticlePage from './pages/ArticlePage';
 import ArticleListPage from './pages/ArticlesListPage';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
+import NavBar from './NavBar';
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <h1>My Awesome Blog</h1>
+        <NavBar />
         <div id="page-body">
           <Routes>
             <Route path="/" element={<HomePage />} />
