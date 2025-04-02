@@ -1,18 +1,28 @@
-import { useParams } from 'react-router-dom';
-import articles from './article-content';
-import NotFoundPage from './NotFoundPage';
-// import CommentsList from '../components/CommentsList';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import NotFoundPage from './NotFoundPage';
+import articles from './article-content';
+import axios from 'axios';
+
+// import CommentsList from '../components/CommentsList';
 
 const ArticlePage = () => {
   const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [] });
+  const { articleId } = useParams();
+
+  const article = articles.find((article) => article.name === articleId);
 
   useEffect(() => {
-    setArticleInfo({ upvotes: Math.ceil(Math.random() * 10), comments: [] });
-  }, []);
+    const loadArticleInfo = async () => {
+      const response = await axios.get(`api/articles/${articleId}`);
+      // const response = await axios.get(`api/articles/learn-react`);
+      const newArticleInfo = response.data;
+      setArticleInfo(newArticleInfo);
+      console.log(newArticleInfo);
+    };
 
-  const { articleId } = useParams();
-  const article = articles.find((article) => article.name === articleId);
+    loadArticleInfo();
+  }, [articleId]);
 
   if (!article) {
     return <NotFoundPage />;

@@ -1,8 +1,17 @@
 import express from 'express';
 import { db, connectToDb } from './db.js'; // Explicit extension
+import cors from 'cors'; // 👈 Import the package
 
 const app = express();
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // Your React frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    credentials: true, // Allow cookies (if needed)
+  })
+);
 
 app.get('/api/articles/:name', async (req, res) => {
   const { name } = req.params;
