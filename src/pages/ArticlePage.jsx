@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import NotFoundPage from './NotFoundPage';
 import articles from './article-content';
 import axios from 'axios';
-
 // import CommentsList from '../components/CommentsList';
 
 const ArticlePage = () => {
