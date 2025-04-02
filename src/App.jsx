@@ -6,7 +6,6 @@ import ArticleListPage from './pages/ArticlesListPage';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import NavBar from './NavBar';
-import axios from 'axios';
 
 function App() {
   return (
