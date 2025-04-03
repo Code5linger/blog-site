@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import NotFoundPage from './NotFoundPage';
 import CommentsList from '../components/CommentsList';
 import axios from 'axios';
+import AddCommentForm from '../components/AddCommentsForm';
 
 const ArticlePage = () => {
   const [articleInfo, setArticleInfo] = useState({ upvotes: 69, comments: [] });
@@ -41,6 +42,10 @@ const ArticlePage = () => {
       {article.content.map((paragraph, index) => (
         <p key={index}>{paragraph}</p>
       ))}
+      <AddCommentForm
+        articleName={articleId}
+        onArticleUpdated={(updatedArticle) => setArticleInfo(updatedArticle)}
+      />
       <CommentsList comments={articleInfo.comments} />
     </>
   );
