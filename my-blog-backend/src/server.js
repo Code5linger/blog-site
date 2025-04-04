@@ -16,16 +16,17 @@ app.use(express.json());
 app.use(async (req, res, next) => {
   const { authtoken } = req.headers;
 
-  req.user = null; // Initialize req.user as null (for unauthenticated requests)
-
   if (authtoken) {
     try {
       req.user = await admin.auth().verifyIdToken(authtoken);
     } catch (e) {
-      // res.sendStatus(400);
-      return res.status(403).json({ error: 'Invalid or expired token' });
+      return res.sendStatus(400);
+      // return res.status(403).json({ error: 'Invalid or expired token' });
     }
   }
+
+  req.user = req.user || {};
+
   next();
 });
 
