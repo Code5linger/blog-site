@@ -4,6 +4,7 @@ import express from 'express';
 import { db, connectToDb } from './db.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -131,5 +132,5 @@ connectToDb(() => {
   });
 });
 
-// code@gmail.com
-// codeslinger
+// codeslingerio;
+// zSxdhAZS8UGvseS8;
