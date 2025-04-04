@@ -3,7 +3,9 @@ import admin from 'firebase-admin';
 import express from 'express';
 import { db, connectToDb } from './db.js';
 
-const credentials = JSON.parse(fs.readFileSync('../credentials.json'));
+const credentials = JSON.parse(
+  fs.readFileSync('../my-blog-backend/credentials.json')
+);
 admin.initializeApp({
   credential: admin.credential.cert(credentials),
 });
@@ -13,11 +15,15 @@ app.use(express.json());
 
 app.use(async (req, res, next) => {
   const { authtoken } = req.headers;
+
+  req.user = null; // Initialize req.user as null (for unauthenticated requests)
+
   if (authtoken) {
     try {
-      req.user = await admin.auth().varifyIdToken(authtoken);
+      req.user = await admin.auth().verifyIdToken(authtoken);
     } catch (e) {
-      res.sendStatus(400);
+      // res.sendStatus(400);
+      return res.status(403).json({ error: 'Invalid or expired token' });
     }
   }
   next();
@@ -26,14 +32,15 @@ app.use(async (req, res, next) => {
 // ! Getting the POST
 app.get('/api/articles/:name', async (req, res) => {
   const { name } = req.params;
-  const { uid } = req.user;
+  // const { uid } = req.user;
+  const { uid } = req.user || {}; // Fallback if req.user is null
 
   const article = await db.collection('articles').findOne({ name });
 
   if (article) {
     const upvoteIds = article.upvoteIds || [];
-    article.canUpvote = uid && !upvoteIds.include(uid);
-    res.send(article);
+    article.canUpvote = uid && !upvoteIds.includes(uid);
+    res.json(article);
   } else {
     res.sendStatus(404);
   }
@@ -42,6 +49,10 @@ app.get('/api/articles/:name', async (req, res) => {
 // ! UPVOTE
 app.put('/api/articles/:name/upvote', async (req, res) => {
   const { name } = req.params;
+
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
 
   await db.collection('articles').updateOne(
     { name },
@@ -63,6 +74,10 @@ app.put('/api/articles/:name/upvote', async (req, res) => {
 app.post('/api/articles/:name/comments', async (req, res) => {
   const { name } = req.params;
   const { postedBy, text } = req.body;
+
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
 
   await db.collection('articles').updateOne(
     { name },
