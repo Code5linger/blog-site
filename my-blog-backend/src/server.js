@@ -11,13 +11,28 @@ admin.initializeApp({
 const app = express();
 app.use(express.json());
 
+app.use(async (req, res, next) => {
+  const { authtoken } = req.headers;
+  if (authtoken) {
+    try {
+      req.user = await admin.auth().varifyIdToken(authtoken);
+    } catch (e) {
+      res.sendStatus(400);
+    }
+  }
+  next();
+});
+
 // ! Getting the POST
 app.get('/api/articles/:name', async (req, res) => {
   const { name } = req.params;
+  const { uid } = req.user;
 
   const article = await db.collection('articles').findOne({ name });
 
   if (article) {
+    const upvoteIds = article.upvoteIds || [];
+    article.canUpvote = uid && !upvoteIds.include(uid);
     res.send(article);
   } else {
     res.sendStatus(404);
