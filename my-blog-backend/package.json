@@ -10,6 +10,7 @@
     "nodemon": "^3.1.9"
   },
   "scripts": {
+    "start": "node src/server.js",
     "dev": "npx nodemon src/server.js"
   }
 }
